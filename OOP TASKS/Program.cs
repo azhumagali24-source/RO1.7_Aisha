@@ -1,42 +1,38 @@
 ﻿using System;
 
-class BankAccount
+class Temperature
 {
-    public string Owner { get; }
+    private double _celsius;
 
-    public decimal Balance { get; private set; }
-
-    public BankAccount(string owner, decimal initialDeposit)
+    public double Celsius
     {
-        if (initialDeposit < 0)
-            throw new ArgumentException("Initial deposit cannot be negative.");
+        get => _celsius;
+        set
+        {
+            if (value < -273.15)
+                throw new ArgumentException("Temperature cannot be below absolute zero.");
 
-        Owner = owner;
-        Balance = initialDeposit;
+            _celsius = value;
+        }
     }
 
-    public void Deposit(decimal amount)
+    public double Fahrenheit
     {
-        if (amount <= 0)
-            throw new ArgumentException("Deposit amount must be positive.");
-
-        Balance += amount;
+        get => _celsius * 9 / 5 + 32;
+        set
+        {
+            Celsius = (value - 32) * 5 / 9;
+        }
     }
 
-    public void Withdraw(decimal amount)
+    public Temperature(double celsius)
     {
-        if (amount <= 0)
-            throw new ArgumentException("Withdrawal amount must be positive.");
-
-        if (amount > Balance)
-            throw new InvalidOperationException("Insufficient funds");
-
-        Balance -= amount;
+        Celsius = celsius;
     }
 
-    public void PrintStatement()
+    public void Print()
     {
-        Console.WriteLine($"Owner: {Owner}, Balance: {Balance}");
+        Console.WriteLine($"{Celsius}°C / {Fahrenheit}°F");
     }
 }
 
@@ -44,16 +40,15 @@ class Program
 {
     static void Main()
     {
-        var acc = new BankAccount("Aisha", 100m);
+        var temp = new Temperature(25);
+        temp.Print();
 
-        acc.Deposit(50m);
-        acc.Withdraw(30m);
-
-        acc.PrintStatement();
+        temp.Fahrenheit = 100;
+        temp.Print();
 
         try
         {
-            acc.Withdraw(1000m);
+            temp.Celsius = -300;
         }
         catch (Exception ex)
         {
